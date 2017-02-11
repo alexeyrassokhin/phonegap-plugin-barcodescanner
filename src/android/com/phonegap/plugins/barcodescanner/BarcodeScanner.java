@@ -27,6 +27,7 @@ import org.apache.cordova.PermissionHelper;
 import com.google.zxing.client.android.CaptureActivity;
 import com.google.zxing.client.android.encode.EncodeActivity;
 import com.google.zxing.client.android.Intents;
+import java.io.UnsupportedEncodingException;
 
 /**
  * This calls out to the ZXing barcode reader and returns the result.
@@ -215,12 +216,18 @@ public class BarcodeScanner extends CordovaPlugin {
             if (resultCode == Activity.RESULT_OK) {
                 JSONObject obj = new JSONObject();
                 try {
-                    obj.put(TEXT, intent.getStringExtra("SCAN_RESULT"));
+                    String res = new String(intent.getStringExtra("SCAN_RESULT").getBytes("cp1252"), "cp1251");
+                    Log.d(LOG_TAG, "scanres="+res);
+                    obj.put(TEXT, res);
                     obj.put(FORMAT, intent.getStringExtra("SCAN_RESULT_FORMAT"));
                     obj.put(CANCELLED, false);
                 } catch (JSONException e) {
-                    Log.d(LOG_TAG, "This should never happen");
+                    Log.d(LOG_TAG, "This should never happen JSONException");
+                } catch (UnsupportedEncodingException e) {
+                    Log.d(LOG_TAG, "This should never happen UnsupportedEncodingException");
                 }
+
+
                 //this.success(new PluginResult(PluginResult.Status.OK, obj), this.callback);
                 this.callbackContext.success(obj);
             } else if (resultCode == Activity.RESULT_CANCELED) {
