@@ -250,7 +250,9 @@
     NSNumber* cancelledNumber = @(cancelled ? 1 : 0);
 
     NSMutableDictionary* resultDict = [[NSMutableDictionary new] autorelease];
-    resultDict[@"text"] = scannedText;
+    NSData *dt = [scannedText dataUsingEncoding:NSWindowsCP1252StringEncoding];
+    NSString *str=[[NSString alloc]initWithData:dt encoding:NSWindowsCP1251StringEncoding];
+    resultDict[@"text"] = str;
     resultDict[@"format"] = format;
     resultDict[@"cancelled"] = cancelledNumber;
 
